@@ -21,14 +21,14 @@ class UserProvider implements UserProviderInterface
 
     public function supportsClass(string $class): bool
     {
-        return $class === User::class;
+        return User::class === $class;
     }
 
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
         $user = $this->userRepository->findOneByEmail($identifier);
         if (!$user) {
-            throw new \Exception("asd");
+            throw new \Exception('asd');
         }
 
         return $user;

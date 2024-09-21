@@ -11,13 +11,13 @@ class AccessTokenHandler implements AccessTokenHandlerInterface
 {
     public function getUserBadgeFrom(#[\SensitiveParameter] string $accessToken): UserBadge
     {
-//        $userData = $this->jwtTokenManager->parse($accessToken);
-//        $username = $userData['username'];
+        //        $userData = $this->jwtTokenManager->parse($accessToken);
+        //        $username = $userData['username'];
 
         return new UserBadge(
-            "Me",
+            'Me',
             function (string $username) {
-//                return $this->userRepository->findOneBy(['username' => $username]);
+                //                return $this->userRepository->findOneBy(['username' => $username]);
                 return ['password' => 'password'];
             }
         );

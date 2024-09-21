@@ -7,12 +7,12 @@ namespace App\Auth;
 interface UserRepositoryInterface
 {
     /**
-     * Find a user by email
+     * Find a user by email.
      */
     public function findOneByEmail(string $email): ?User;
 
     /**
-     * Persist a user
+     * Persist a user.
      */
     public function persist(User $user): void;
 }

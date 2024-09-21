@@ -41,7 +41,7 @@ class AuthController extends AbstractController
     public function mock(): Response
     {
         return new JsonResponse([
-            'message' => 'Mock response V2!'
+            'message' => 'Mock response V2!',
         ]);
     }
 
@@ -51,7 +51,7 @@ class AuthController extends AbstractController
         $body = json_decode($request->getContent(), true);
         if (!$body) {
             return new JsonResponse([
-                'message' => 'Invalid JSON'
+                'message' => 'Invalid JSON',
             ], Response::HTTP_BAD_REQUEST);
         }
 
@@ -61,13 +61,13 @@ class AuthController extends AbstractController
         $user = $this->userRepository->findOneByEmail($email);
         if (!$user) {
             return new JsonResponse([
-                'message' => 'User not found'
+                'message' => 'User not found',
             ], Response::HTTP_NOT_FOUND);
         }
 
         if (!$this->userPasswordHasher->isPasswordValid($user, $password)) {
             return new JsonResponse([
-                'message' => 'Invalid password'
+                'message' => 'Invalid password',
             ], Response::HTTP_UNAUTHORIZED);
         }
 
@@ -76,7 +76,7 @@ class AuthController extends AbstractController
 
         return new JsonResponse([
             'accessToken' => $jwtToken,
-            'refreshToken' => $refreshToken->token
+            'refreshToken' => $refreshToken->token,
         ]);
     }
 
@@ -85,7 +85,7 @@ class AuthController extends AbstractController
         $body = json_decode($request->getContent(), true);
         if (!$body) {
             return new JsonResponse([
-                'message' => 'Invalid JSON'
+                'message' => 'Invalid JSON',
             ], Response::HTTP_BAD_REQUEST);
         }
 
@@ -95,12 +95,12 @@ class AuthController extends AbstractController
         $user = $this->userRepository->findOneByEmail($email);
         if ($user) {
             return new JsonResponse([
-                'message' => 'User already exists'
+                'message' => 'User already exists',
             ], Response::HTTP_CONFLICT);
         }
 
         return new JsonResponse([
-            'message' => 'User created'
+            'message' => 'User created',
         ]);
     }
 }

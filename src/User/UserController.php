@@ -14,8 +14,9 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/{version}/user')]
 class UserController extends AbstractController
 {
-  #[Route('/', name: 'hello', methods: ['GET'])]
-  public function hello(): Response {
-      return new JsonResponse(['message' => 'Hello World!']);
-  }
+    #[Route('/', name: 'hello', methods: ['GET'])]
+    public function hello(): Response
+    {
+        return new JsonResponse(['message' => 'Hello World!']);
+    }
 }

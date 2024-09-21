@@ -13,9 +13,9 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
-use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
 class BearerAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
@@ -29,7 +29,7 @@ class BearerAuthenticator extends AbstractAuthenticator implements Authenticatio
     {
         $hasAuthPrefix = strpos($request->attributes->get('_route'), 'auth_');
 
-        return $hasAuthPrefix === false;
+        return false === $hasAuthPrefix;
     }
 
     public function authenticate(Request $request): Passport
@@ -46,7 +46,7 @@ class BearerAuthenticator extends AbstractAuthenticator implements Authenticatio
         $accessToken = $matches[1];
         $plainData = $this->jwtTokenManager->parse($accessToken);
 
-        $user = $this->userRepository->findOneByEmail($plainData["username"]);
+        $user = $this->userRepository->findOneByEmail($plainData['username']);
         if (!$user) {
             throw new CustomUserMessageAuthenticationException('Invalid authorization header');
         }
@@ -62,13 +62,13 @@ class BearerAuthenticator extends AbstractAuthenticator implements Authenticatio
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $data = [
-            'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
+            'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function start(Request $request, AuthenticationException $authException = null): Response
+    public function start(Request $request, ?AuthenticationException $authException = null): Response
     {
         return new JsonResponse([
             'message' => 'Auth required',

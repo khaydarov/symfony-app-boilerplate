@@ -19,8 +19,8 @@ class RoutesLoader
         $finder = new Finder();
         $finder
             ->files()
-            ->in($dir . '*/')
-            ->name("*Controller.php");
+            ->in($dir.'*/')
+            ->name('*Controller.php');
 
         $loader = new AttributeFileLoader(
             new FileLocator($dir),
