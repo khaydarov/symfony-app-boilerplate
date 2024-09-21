@@ -14,6 +14,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
+#[Route('/{version}/auth')]
 class AuthController extends AbstractController
 {
     public function __construct(
@@ -22,6 +23,26 @@ class AuthController extends AbstractController
         private readonly RefreshTokenRepositoryInterface $refreshTokenRepository,
         private readonly JWTTokenManagerInterface $jwtTokenManager,
     ) {
+    }
+
+    #[Route('/me', name: 'auth_me', methods: ['GET'])]
+    public function me(): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $user = $this->getUser();
+
+        return new JsonResponse([
+            'email' => $user->getUserIdentifier(),
+            'roles' => $user->getRoles(),
+        ]);
+    }
+
+    #[Route('/mock', name: 'auth_mock', methods: ['GET'])]
+    public function mock(): Response
+    {
+        return new JsonResponse([
+            'message' => 'Mock response'
+        ]);
     }
 
     #[Route('/sign-in', name: 'auth_sign_in', methods: ['POST'])]
@@ -77,8 +98,6 @@ class AuthController extends AbstractController
                 'message' => 'User already exists'
             ], Response::HTTP_CONFLICT);
         }
-
-//        $user->
 
         return new JsonResponse([
             'message' => 'User created'

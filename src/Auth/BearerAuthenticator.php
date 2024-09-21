@@ -8,7 +8,6 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
@@ -28,8 +27,9 @@ class BearerAuthenticator extends AbstractAuthenticator implements Authenticatio
 
     public function supports(Request $request): ?bool
     {
-        return !('auth_sign_in' === $request->attributes->get('_route')
-            && $request->isMethod('POST'));
+        $hasAuthPrefix = strpos($request->attributes->get('_route'), 'auth_');
+
+        return $hasAuthPrefix === false;
     }
 
     public function authenticate(Request $request): Passport
@@ -56,46 +56,13 @@ class BearerAuthenticator extends AbstractAuthenticator implements Authenticatio
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-//        $userAgent = $request->headers->get('User-Agent', 'Unknown');
-//        $fingerprint = md5($userAgent.$this->salt);
-//
-//        $refreshToken = $this->refreshTokenRepository->findOneBy([
-//            'fingerprint' => $fingerprint,
-//        ]);
-//
-//        if (null !== $refreshToken) {
-//            $this->refreshTokenRepository->remove($refreshToken, true);
-//        }
-//
-//        $uuid = Uuid::v7();
-//        $accessToken = $this->jwtTokenManager->create($token->getUser());
-//        $refreshToken = new RefreshToken();
-//        $refreshToken
-//            ->setCreatedAt(new \DateTimeImmutable())
-//            ->setToken($uuid->jsonSerialize())
-//            ->setUserIdentifier($token->getUserIdentifier())
-//            ->setFingerprint($fingerprint);
-//
-//        $this->refreshTokenRepository->save($refreshToken, true);
-
-//        return new JsonResponse([
-//            'data' => [
-//                'accessToken' => '$accessToken',
-//                'refreshToken' => '$uuid->jsonSerialize',
-//            ],
-//        ]);
-
         return null;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $data = [
-            // you may want to customize or obfuscate the message first
             'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
-
-            // or to translate this message
-            // $this->translator->trans($exception->getMessageKey(), $exception->getMessageData())
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
