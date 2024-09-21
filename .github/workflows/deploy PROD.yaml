@@ -14,8 +14,8 @@ jobs:
           heroku_app_name: "letter-ai-api-prod"
           heroku_email: "murod.haydarov@gmail.com"
         env:
-          APP_ENV: prod
-          APP_SECRET: ${{secrets.APP_SECRET_PROD}}
-          JWT_SECRET_KEY: ${{secrets.JWT_SECRET_KEY_PROD}}
-          JWT_PUBLIC_KEY: ${{secrets.JWT_PUBLIC_KEY_PROD}}
-          JWT_PASSPHRASE: ${{secrets.JWT_PASSPHRASE_PROD}}
+          HD_APP_ENV: prod
+          HD_APP_SECRET: ${{secrets.APP_SECRET_PROD}}
+          HD_JWT_SECRET_KEY: ${{secrets.JWT_SECRET_KEY_PROD}}
+          HD_JWT_PUBLIC_KEY: ${{secrets.JWT_PUBLIC_KEY_PROD}}
+          HD_JWT_PASSPHRASE: ${{secrets.JWT_PASSPHRASE_PROD}}

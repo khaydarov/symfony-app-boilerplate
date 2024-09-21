@@ -14,8 +14,8 @@ jobs:
           heroku_app_name: "letter-ai-api-stage"
           heroku_email: "murod.haydarov@gmail.com"
         env:
-          APP_ENV: stage
-          APP_SECRET: ${{secrets.APP_SECRET_STAGE}}
-          JWT_SECRET_KEY: ${{secrets.JWT_SECRET_KEY_STAGE}}
-          JWT_PUBLIC_KEY: ${{secrets.JWT_PUBLIC_KEY_STAGE}}
-          JWT_PASSPHRASE: ${{secrets.JWT_PASSPHRASE_STAGE}}
+          HD_APP_ENV: stage
+          HD_APP_SECRET: ${{secrets.APP_SECRET_STAGE}}
+          HD_JWT_SECRET_KEY: ${{secrets.JWT_SECRET_KEY_STAGE}}
+          HD_JWT_PUBLIC_KEY: ${{secrets.JWT_PUBLIC_KEY_STAGE}}
+          HD_JWT_PASSPHRASE: ${{secrets.JWT_PASSPHRASE_STAGE}}
