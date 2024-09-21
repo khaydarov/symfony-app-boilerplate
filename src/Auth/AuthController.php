@@ -41,7 +41,7 @@ class AuthController extends AbstractController
     public function mock(): Response
     {
         return new JsonResponse([
-            'message' => 'Mock response'
+            'message' => 'Mock response V2!'
         ]);
     }
 
