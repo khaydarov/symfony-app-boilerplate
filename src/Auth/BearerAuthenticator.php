@@ -19,17 +19,26 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 
 class BearerAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
+    private readonly array $skipRoutes;
+
     public function __construct(
         private readonly JWTTokenManagerInterface $jwtTokenManager,
         private readonly UserRepositoryInterface $userRepository,
     ) {
+        $this->skipRoutes = [
+            'auth_sign_in',
+            'auth_sign_up',
+            'auth_access_token',
+        ];
     }
 
     public function supports(Request $request): ?bool
     {
-        $hasAuthPrefix = strpos($request->attributes->get('_route'), 'auth_');
+        if (in_array($request->attributes->get('_route'), $this->skipRoutes)) {
+            return false;
+        }
 
-        return true; // false === $hasAuthPrefix;
+        return true;
     }
 
     public function authenticate(Request $request): Passport
@@ -45,7 +54,6 @@ class BearerAuthenticator extends AbstractAuthenticator implements Authenticatio
 
         $accessToken = $matches[1];
         $plainData = $this->jwtTokenManager->parse($accessToken);
-
         $user = $this->userRepository->findOneById($plainData['userId']);
         if (!$user) {
             throw new CustomUserMessageAuthenticationException('Invalid authorization header');

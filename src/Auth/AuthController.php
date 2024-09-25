@@ -34,8 +34,46 @@ class AuthController extends AbstractController
         $user = $this->getUser();
 
         return new JsonResponse([
-            'email' => $user->getUserIdentifier(),
-            'roles' => $user->getRoles(),
+            'id' => $user->getUserIdentifier(),
+        ]);
+    }
+
+    #[Route('/accessToken', name: 'auth_access_token', methods: ['GET'])]
+    public function retrieveAccessToken(Request $request): Response
+    {
+        $body = json_decode($request->getContent(), true);
+        if (!$body) {
+            return new JsonResponse([
+                'message' => 'Invalid JSON',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $refreshToken = $this->refreshTokenRepository->findOneByToken($body['refreshToken']);
+        if (!$refreshToken) {
+            return new JsonResponse([
+                'message' => 'Refresh token not found',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($refreshToken->expiresAt < new \DateTimeImmutable()) {
+            return new JsonResponse([
+                'message' => 'Refresh token expired',
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $user = $this->userRepository->findOneById($refreshToken->userId);
+        if (!$user) {
+            return new JsonResponse([
+                'message' => 'User not found',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $jwtToken = $this->jwtTokenManager->createFromPayload($user, [
+            'userId' => $user->getUserIdentifier(),
+        ]);
+
+        return new JsonResponse([
+            'accessToken' => $jwtToken,
         ]);
     }
 

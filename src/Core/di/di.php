@@ -21,5 +21,8 @@ return function (ContainerConfigurator $configurator) {
     $services->set(RequestIdSubscriber::class)
         ->tag('kernel.event_subscriber');
 
+    $services->set(RequestLoggerSubscriber::class)
+        ->tag('kernel.event_subscriber');
+
     $services->set(RoutesLoader::class)->tag('routing.route_loader');
 };

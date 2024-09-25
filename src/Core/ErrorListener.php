@@ -30,7 +30,7 @@ readonly class ErrorListener
         } elseif ($exception instanceof JWTDecodeFailureException) {
             $event->setResponse(
                 new JsonResponse([
-                    'message' => 'JWT Decode error. Please, log out and auth again',
+                    'message' => 'JWT Decode error. Please, auth again',
                 ], 401)
             );
         } else {
