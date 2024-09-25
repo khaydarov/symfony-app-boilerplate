@@ -11,8 +11,8 @@ jobs:
       - uses: akhileshns/heroku-deploy@v3.13.15
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "letter-ai-api-prod"
-          heroku_email: "murod.haydarov@gmail.com"
+          heroku_email: ${{variables.HEROKU_EMAIL}}
+          heroku_app_name: ${{variables.HEROKU_APP_NAME_PROD}}
         env:
           HD_APP_ENV: prod
           HD_APP_SECRET: ${{secrets.APP_SECRET_PROD}}
