@@ -10,8 +10,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public function __construct(
-        private string $email,
-        private string $password,
+        public readonly string $id,
+        public readonly string $email,
+        public readonly string $password,
+        public readonly \DateTimeImmutable $createdAt = new \DateTimeImmutable(),
+        public readonly \DateTimeImmutable $updatedAt = new \DateTimeImmutable(),
     ) {
     }
 
@@ -31,6 +34,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
-        return $this->email;
+        return $this->id;
     }
 }

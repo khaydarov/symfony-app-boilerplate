@@ -11,4 +11,6 @@ interface RefreshTokenRepositoryInterface
     public function findOneByUser(User $user): ?RefreshToken;
 
     public function persist(RefreshToken $refreshToken): void;
+
+    public function generateToken(): string;
 }

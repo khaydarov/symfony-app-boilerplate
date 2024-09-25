@@ -29,7 +29,7 @@ class BearerAuthenticator extends AbstractAuthenticator implements Authenticatio
     {
         $hasAuthPrefix = strpos($request->attributes->get('_route'), 'auth_');
 
-        return false === $hasAuthPrefix;
+        return true; // false === $hasAuthPrefix;
     }
 
     public function authenticate(Request $request): Passport
@@ -46,7 +46,7 @@ class BearerAuthenticator extends AbstractAuthenticator implements Authenticatio
         $accessToken = $matches[1];
         $plainData = $this->jwtTokenManager->parse($accessToken);
 
-        $user = $this->userRepository->findOneByEmail($plainData['username']);
+        $user = $this->userRepository->findOneById($plainData['userId']);
         if (!$user) {
             throw new CustomUserMessageAuthenticationException('Invalid authorization header');
         }

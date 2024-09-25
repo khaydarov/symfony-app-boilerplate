@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Auth;
 
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +23,7 @@ class AuthController extends AbstractController
         private readonly UserPasswordHasherInterface $userPasswordHasher,
         private readonly RefreshTokenRepositoryInterface $refreshTokenRepository,
         private readonly JWTTokenManagerInterface $jwtTokenManager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -34,14 +36,6 @@ class AuthController extends AbstractController
         return new JsonResponse([
             'email' => $user->getUserIdentifier(),
             'roles' => $user->getRoles(),
-        ]);
-    }
-
-    #[Route('/mock', name: 'auth_mock', methods: ['GET'])]
-    public function mock(): Response
-    {
-        return new JsonResponse([
-            'message' => 'Mock response V2!',
         ]);
     }
 
@@ -71,8 +65,18 @@ class AuthController extends AbstractController
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        $refreshToken = $this->refreshTokenRepository->findOneByUser($user);
-        $jwtToken = $this->jwtTokenManager->create($user);
+        $this->logger->info('generating refresh token with expiration date of 1 month');
+        $refreshToken = new RefreshToken(
+            $user->getUserIdentifier(),
+            $this->refreshTokenRepository->generateToken(),
+            new \DateTimeImmutable(),
+            new \DateTimeImmutable('+1 month'),
+        );
+
+        $this->refreshTokenRepository->persist($refreshToken);
+        $jwtToken = $this->jwtTokenManager->createFromPayload($user, [
+            'userId' => $user->getUserIdentifier(),
+        ]);
 
         return new JsonResponse([
             'accessToken' => $jwtToken,
@@ -80,6 +84,7 @@ class AuthController extends AbstractController
         ]);
     }
 
+    #[Route('/sign-up', name: 'auth_sign_up', methods: ['POST'])]
     public function signUp(Request $request): Response
     {
         $body = json_decode($request->getContent(), true);
@@ -99,8 +104,22 @@ class AuthController extends AbstractController
             ], Response::HTTP_CONFLICT);
         }
 
-        return new JsonResponse([
-            'message' => 'User created',
+        $this->logger->info('generating hash for user password');
+        $password = $this->userPasswordHasher->hashPassword(new User('', $email, ''), $password);
+        $user = new User(
+            $this->userRepository->generateIdentifier(),
+            $email,
+            $password
+        );
+
+        $this->logger->info('persisting user');
+        $this->userRepository->persist($user);
+
+        return new JsonResponse(data: [
+            'message' => 'User successfully created',
+            'data' => [
+                'id' => $user->getUserIdentifier(),
+            ],
         ]);
     }
 }
