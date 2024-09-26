@@ -99,7 +99,7 @@ openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
 5. **Run migrations:**
 
 ```bash
-   php bin/console doctrine:migrations:migrate
+php bin/console doctrine:migrations:migrate
 ```
 
 ## Configuration
@@ -162,9 +162,18 @@ heroku config:set JWT_PASSPHRASE="your_jwt_passphrase"
 
 5. **Deploy to Heroku (in progress):**
 
+There are two ways to deploy to Heroku:
+
+- **Using Git:**
+
 ```bash
 git push heroku main
 ```
+
+- **Using GitHub Actions**
+
+Push your code to GitHub and run the GitHub Actions workflow to deploy to Heroku.
+
 
 6. **Run migrations:**
 
@@ -194,4 +203,10 @@ php bin/console cache:clear
 
 ```bash
 php bin/console doctrine:migrations:migrate
+```
+
+** Linting and fixing code:**
+
+```bash
+make cs_fix
 ```
